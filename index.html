@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invisible Unicode characters that apps actually keep (U+3164, U+2800, U+200B)</title>
+<meta name="description" content="Which blank Unicode character works in WhatsApp, Instagram, TikTok, Discord, Free Fire, PUBG, Telegram and X — with copy buttons, HTML entities, CSS escapes and a JSON dataset.">
+<style>
+  :root { --bg: #fbfaf7; --fg: #1d1f24; --muted: #5d6270; --line: #e3e0d8; --accent: #3b3fb6; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #15171c; --fg: #e8e6e1; --muted: #a3a7b3; --line: #2b2f38; --accent: #9ea2ff; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 800px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 1.8rem; margin: 0 0 .3rem; line-height: 1.25; } h2 { margin-top: 2.2rem; font-size: 1.25rem; }
+  .sub { color: var(--muted); margin: 0 0 1.6rem; }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+  pre { background: rgba(127,127,127,.08); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: .9rem; }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .94rem; } td, th { border-bottom: 1px solid var(--line); padding: 8px 6px; text-align: start; vertical-align: top; }
+  button { font: inherit; font-size: .85rem; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+  button.done { border-color: var(--accent); color: var(--accent); }
+  textarea { width: 100%; box-sizing: border-box; font: inherit; min-height: 4.5rem; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: inherit; }
+  #reveal { font-family: ui-monospace, Consolas, monospace; word-break: break-all; min-height: 1.6rem; }
+  footer { margin-top: 3rem; color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Invisible Unicode characters that apps actually keep</h1>
+  <p class="sub">U+200B is the one everyone copies, and most chat apps strip it. The blank that survives depends on the app and the field.</p>
+
+  <h2>Which character for which app</h2>
+  <div class="scroll"><table id="apps"><thead><tr><th>App</th><th>Field</th><th>Character</th><th>Result</th><th></th></tr></thead><tbody></tbody></table></div>
+
+  <h2>The characters</h2>
+  <div class="scroll"><table id="chars"><thead><tr><th>Name</th><th>Code</th><th>HTML</th><th>CSS</th><th>Where it helps</th><th></th></tr></thead><tbody></tbody></table></div>
+
+  <h2>Does this text hide anything?</h2>
+  <p>Paste text below; every invisible character is shown as <code>[U+XXXX]</code>.</p>
+  <textarea id="t" aria-label="Text to check">pay&#8203;pal</textarea>
+  <p id="reveal" aria-live="polite"></p>
+
+  <h2>Use the data</h2>
+<pre>import { blankFor, isVisuallyBlank, revealInvisible } from './blanks.js';
+blankFor('WhatsApp');            // '\u2800'
+isVisuallyBlank('\u3164\u200B'); // true — str.trim() === '' misses this
+revealInvisible('pay\u200Bpal'); // 'pay[U+200B]pal'</pre>
+  <p>Dataset: <a href="blanks.json">blanks.json</a> · code: <a href="https://github.com/mahmoudQq2023/invisible-unicode-characters">GitHub</a>.
+  For a copy-paste tool with more options, see <a href="https://confileo.com/tools/ghost-text/">invisible text generator</a>
+  and, for game nicknames, the <a href="https://confileo.com/tools/invisible-name-generator/">invisible name generator</a>.</p>
+
+  <footer>MIT · by Mahmoud Daghash · updated September 2026</footer>
+</main>
+<script type="module">
+  import { revealInvisible } from './blanks.js';
+  const data = await (await fetch('blanks.json')).json();
+  const byCode = Object.fromEntries(data.characters.map((c) => [c.code, c]));
+  const copyBtn = (ch, label) => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = label;
+    b.onclick = async () => { try { await navigator.clipboard.writeText(ch); b.textContent = 'Copied'; b.classList.add('done'); setTimeout(() => { b.textContent = label; b.classList.remove('done'); }, 1500); } catch {} };
+    return b;
+  };
+  const cell = (tr, text) => { const td = document.createElement('td'); td.textContent = text; tr.appendChild(td); return td; };
+  for (const a of data.apps) {
+    const tr = document.createElement('tr');
+    cell(tr, a.app); cell(tr, a.field); cell(tr, a.code + ' ' + (byCode[a.code]?.name || '')); cell(tr, a.result + ' — ' + a.note);
+    const td = document.createElement('td'); td.appendChild(copyBtn(byCode[a.code].char, 'Copy')); tr.appendChild(td);
+    document.querySelector('#apps tbody').appendChild(tr);
+  }
+  for (const c of data.characters) {
+    const tr = document.createElement('tr');
+    cell(tr, c.name); cell(tr, c.code); cell(tr, c.html); cell(tr, c.css); cell(tr, c.use);
+    const td = document.createElement('td'); td.appendChild(copyBtn(c.char, 'Copy')); tr.appendChild(td);
+    document.querySelector('#chars tbody').appendChild(tr);
+  }
+  const t = document.getElementById('t'), out = document.getElementById('reveal');
+  const run = () => { out.textContent = revealInvisible(t.value); };
+  t.addEventListener('input', run); run();
+</script>
+</body>
+</html>
