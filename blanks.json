@@ -1,0 +1,32 @@
+{
+  "updated": "2026-09-24",
+  "note": "Which blank or invisible Unicode character each app keeps. 'works' rows were checked on real accounts; 'test first' rows change with app updates.",
+  "characters": [
+    { "name": "Hangul Filler", "code": "U+3164", "char": "\u3164", "html": "&#12644;", "css": "\\3164", "width": "blank, full width", "use": "Game nicknames (Free Fire, PUBG), TikTok nickname, Instagram name and bio lines" },
+    { "name": "Braille Pattern Blank", "code": "U+2800", "char": "\u2800", "html": "&#10240;", "css": "\\2800", "width": "blank, one character wide", "use": "Blank messages and comments in WhatsApp, Telegram, Discord, Instagram comments" },
+    { "name": "Zero-Width Space", "code": "U+200B", "char": "\u200B", "html": "&#8203;", "css": "\\200B", "width": "zero", "use": "X (Twitter) posts, iPhone Notes; stripped by most chat apps" },
+    { "name": "Invisible Separator", "code": "U+2063", "char": "\u2063", "html": "&#8291;", "css": "\\2063", "width": "zero", "use": "Kept by Facebook and Messenger" },
+    { "name": "Halfwidth Hangul Filler", "code": "U+FFA0", "char": "\uFFA0", "html": "&#65440;", "css": "\\FFA0", "width": "blank, half width", "use": "Fallback for name fields that reject U+3164" },
+    { "name": "Hair Space", "code": "U+200A", "char": "\u200A", "html": "&#8202;", "css": "\\200A", "width": "very thin, visible gap", "use": "Survives Word, Google Docs and email" },
+    { "name": "Em Space", "code": "U+2003", "char": "\u2003", "html": "&#8195;", "css": "\\2003", "width": "wide gap (width of M)", "use": "Wide gaps in documents and captions" },
+    { "name": "Zero-Width Non-Joiner", "code": "U+200C", "char": "\u200C", "html": "&#8204;", "css": "\\200C", "width": "zero", "use": "Typography; used by zero-width steganography to encode bits" },
+    { "name": "Zero-Width Joiner", "code": "U+200D", "char": "\u200D", "html": "&#8205;", "css": "\\200D", "width": "zero", "use": "Joins emoji into sequences" },
+    { "name": "Word Joiner", "code": "U+2060", "char": "\u2060", "html": "&#8288;", "css": "\\2060", "width": "zero", "use": "Prevents a line break" },
+    { "name": "Byte Order Mark", "code": "U+FEFF", "char": "\uFEFF", "html": "&#65279;", "css": "\\FEFF", "width": "zero", "use": "Start-of-text marker; avoid inside text" },
+    { "name": "No-Break Space", "code": "U+00A0", "char": "\u00A0", "html": "&nbsp;", "css": "\\00A0", "width": "normal space", "use": "Never breaks a line; most apps still trim it" }
+  ],
+  "apps": [
+    { "app": "WhatsApp", "field": "message", "code": "U+2800", "result": "works", "note": "U+200B and U+200C are stripped before sending, so the message is rejected as empty." },
+    { "app": "Instagram", "field": "name, bio lines", "code": "U+3164", "result": "works", "note": "The username field accepts only letters, digits, dots and underscores; no blank works there." },
+    { "app": "Instagram", "field": "comment", "code": "U+2800", "result": "works", "note": "One character is enough; several make a taller comment." },
+    { "app": "TikTok", "field": "nickname, bio", "code": "U+3164", "result": "works", "note": "The character behind the 'invisible name' trend videos." },
+    { "app": "Discord", "field": "message", "code": "U+2800", "result": "works", "note": "Usernames are a-z, 0-9, dots and underscores only; a server nickname can be blank with U+3164." },
+    { "app": "Free Fire", "field": "nickname", "code": "U+3164", "result": "works", "note": "A rename costs diamonds or a rename card. One character is enough; two if the game says the name is too short." },
+    { "app": "PUBG Mobile, BGMI", "field": "nickname", "code": "U+3164", "result": "works", "note": "Needs a rename card." },
+    { "app": "Telegram", "field": "message, name", "code": "U+2800", "result": "works", "note": "U+200B is stripped." },
+    { "app": "X (Twitter)", "field": "post, display name", "code": "U+200B", "result": "works", "note": "X collapses runs of ordinary spaces; a zero-width space survives." },
+    { "app": "iPhone Notes, iMessage", "field": "note, message", "code": "U+200B", "result": "works in Notes", "note": "iMessage refuses a message that is only U+200B; use U+2800 there." },
+    { "app": "Roblox", "field": "display name", "code": "U+3164", "result": "test first", "note": "Roblox strips most fillers after updates; the username never accepts them." },
+    { "app": "Fortnite", "field": "Epic display name", "code": "U+2800", "result": "test first", "note": "Epic allows one display-name change every two weeks; test before you spend it." }
+  ]
+}
